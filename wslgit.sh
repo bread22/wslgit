@@ -5,9 +5,9 @@
 
 # =========================================
 #  Name:    wslgit.sh
-#  Update:  2019-06-01
+#  Update:  2020-02-20
 #  License: GPL-3.0
-#  Author:  Liu Yue (hangxingliu@gmail.com)
+#  Author:  Qingyi Wu (wuqingyi22@gmail.com)
 #
 #  Description:
 #    Convert the Windows path contained in the arguments to Linux(WSL) path,
@@ -16,6 +16,11 @@
 #       I retained the implementation via `wslpath` codes in this script for
 #       reference purposes only. (because wslpath has some shortcomings to
 #       implement it)
+#
+#	Added a dirty quick fix to allow Smartgit to do push/pull with git in WSL.
+#	The repo need to setup correctly and credential saved.
+#	do `git config credential.helper store` 
+#   then do a push/pull manually in WSL to have credential saved.
 # ==========================================
 
 AWK="$(which gawk)";
@@ -88,6 +93,9 @@ argv=0;
 convert_output=false;
 after_double_dash=false;
 for arg in "$@"; do
+	if [[ "$arg" == credential.helper=* ]]; then
+		arg="credential.helper=store"
+	fi	
 	if [[ "$after_double_dash" != true ]]; then
 		if [[ "$arg" == "rev-parse" ]] || [[ "$arg" == "remote" ]] || [[ "$arg" == "init" ]]; then
 			convert_output=true;
